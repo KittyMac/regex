@@ -55,6 +55,12 @@ class Regex
   """
   var _pattern: Pointer[_Pattern]
   let _jit: Bool
+  let _empty: Bool
+  
+  new empty() =>
+  	_pattern = Pointer[_Pattern]
+	_jit = false
+	_empty = true
 
   new create(from: ByteSeq box, jit: Bool = true) ? =>
     """
@@ -71,7 +77,8 @@ class Regex
     if _pattern.is_null() then
       error
     end
-
+	
+	_empty = false
     _jit = jit and (@pcre2_jit_compile_8[I32](_pattern, U32(1)) == 0)
 
   fun matches(subject: String): MatchIterator =>
@@ -105,6 +112,9 @@ class Regex
     object that can give precise match details. Raises an error if there is no
     match.
     """
+	if _empty then
+		error
+	end
     let m = _match(subject, offset, U32(0))?
     Match._create(subject, m)
 
@@ -123,6 +133,9 @@ class Regex
     if _pattern.is_null() then
       error
     end
+	if _empty then
+		error
+	end
 
     var opt = if global then
       _PCRE2.substitute_global()
@@ -164,6 +177,9 @@ class Regex
     if _pattern.is_null() then
       error
     end
+	if _empty then
+		error
+	end
 
     let out = recover Array[String] end
     var off = offset
@@ -187,6 +203,10 @@ class Regex
     Returns the index of a named capture. Raises an error if the named capture
     does not exist.
     """
+	if _empty then
+		error
+	end
+	
     let rc =
       @pcre2_substring_number_from_name[I32](_pattern, name.cstring())
 
@@ -215,6 +235,9 @@ class Regex
     if _pattern.is_null() then
       error
     end
+	if _empty then
+		error
+	end
 
     let m =
       @pcre2_match_data_create_from_pattern_8[Pointer[_Match]](_pattern,
