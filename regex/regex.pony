@@ -66,7 +66,6 @@ class Regex
     """
     Compile a regular expression. Raises an error for an invalid expression.
     """
-    let opt: U32 = _PCRE2.utf()
     var err: I32 = 0
     var erroffset: USize = 0
 

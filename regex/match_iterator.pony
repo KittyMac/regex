@@ -22,7 +22,7 @@ class MatchIterator is Iterator[Match]
     Indicates whether there is another match available.
     """
     try
-      let m = _regex(_subject, _offset)?
+      _regex(_subject, _offset)?
       true
     else
       false
