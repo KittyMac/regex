@@ -7,6 +7,7 @@ BUILD_DIR ?= build/$(config)
 SRC_DIR ?= $(PACKAGE)
 tests_binary := $(BUILD_DIR)/$(PACKAGE)
 docs_dir := build/$(PACKAGE)-docs
+lib_dir=./lib
 
 ifdef config
 	ifeq (,$(filter $(config),debug release))
@@ -44,11 +45,16 @@ $(docs_dir): $(GEN_FILES) $(SOURCE_FILES)
 	${PONYC} --docs-public --pass=docs --output build $(SRC_DIR)
 
 docs: $(docs_dir)
+	
+copy-libs:
+	@mkdir -p $(lib_dir)
+	@cp ./libpcre2/ios/prefix/iphone-build/lib/libpcre2-8.a $(lib_dir)/libpcre2-8-ios.a
+	@cp ./libpcre2/ios/prefix/macosx-build/lib/libpcre2-8.a $(lib_dir)/libpcre2-8-osx.a
 
 TAGS:
 	ctags --recurse=yes $(SRC_DIR)
 
-all: test
+all: test copy-libs
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)

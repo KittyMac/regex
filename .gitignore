@@ -2,3 +2,11 @@ build/*
 TAGS
 tags
 
+libpcre2/ios
+libpcre2/osx
+libpcre2/src
+*.tar.gz
+*.tar.xz
+
+_corral
+_repos
